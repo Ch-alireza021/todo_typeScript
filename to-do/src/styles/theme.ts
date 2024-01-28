@@ -19,7 +19,14 @@ const dark = createTheme({
       styleOverrides: {
         root: {
           background: "#11161b",
-          color:"#fff"
+          color: "#fff",
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+            color:"#19857b"
         },
       },
     },
@@ -39,15 +46,22 @@ const light = createTheme({
       main: red.A400,
     },
   },
-  components:{
-    MuiContainer:{
-        styleOverrides:{
-            root:{
-                background:"fff",
-            }
-        }
-    }
-  }
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          background: "fff",
+        },
+      },
+    },
+    MuiToolbar: {
+        styleOverrides: {
+          root: {
+              color:"#000"
+          },
+        },
+      },
+  },
 });
 
 interface Theme {
