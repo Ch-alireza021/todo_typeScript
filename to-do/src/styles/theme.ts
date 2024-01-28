@@ -19,6 +19,7 @@ const dark = createTheme({
       styleOverrides: {
         root: {
           background: "#11161b",
+          color:"#fff"
         },
       },
     },
@@ -42,7 +43,7 @@ const light = createTheme({
     MuiContainer:{
         styleOverrides:{
             root:{
-                background:"fff"
+                background:"fff",
             }
         }
     }
