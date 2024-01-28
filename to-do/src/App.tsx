@@ -3,18 +3,22 @@ import { ThemeProvider } from "@emotion/react";
 import themes from "./styles/theme";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/Routes";
-import ThemeContextProvider from "./context/ThemeProvider";
+import ThemeContext from "./context/ThemeContext";
+import { useState } from "react";
 function App() {
+  
+  const isTheme = localStorage.getItem("theme");
+  const [theme, setTheme] = useState(isTheme ? isTheme : "dark");
+  const themeMode = theme === "dark" ? themes.dark : themes.light;
   const client = new QueryClient({});
-  const themeMode = localStorage.getItem("theme") ?? themes.dark;
 
   return (
     <ThemeProvider theme={themeMode}>
-      <ThemeContextProvider >
+      <ThemeContext.Provider value={{ theme, setTheme }}>
         <QueryClientProvider client={client}>
           <RouterProvider router={router} />
         </QueryClientProvider>
-      </ThemeContextProvider>
+      </ThemeContext.Provider>
     </ThemeProvider>
   );
 }

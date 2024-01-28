@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
 const dark = createTheme({
@@ -12,6 +12,15 @@ const dark = createTheme({
     },
     error: {
       main: red.A400,
+    },
+  },
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          background: "#11161b",
+        },
+      },
     },
   },
 });
@@ -29,6 +38,15 @@ const light = createTheme({
       main: red.A400,
     },
   },
+  components:{
+    MuiContainer:{
+        styleOverrides:{
+            root:{
+                background:"fff"
+            }
+        }
+    }
+  }
 });
 
 interface Theme {

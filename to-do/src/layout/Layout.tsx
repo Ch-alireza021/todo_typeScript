@@ -6,14 +6,10 @@ import { FC, useContext } from "react";
 import { ThemeContext } from "@emotion/react";
 
 const Layout:FC = () => {
-    const theme=useContext(ThemeContext)
-    console.log(theme);
-    
-
   return (
     <>
       <Header />
-      <Container sx={{background:"red",width:"100vw",height:"100vh"}}>
+      <Container sx={{width:"100vw",height:"100vh"}}>
         <Outlet/>
       </Container>
     </>
