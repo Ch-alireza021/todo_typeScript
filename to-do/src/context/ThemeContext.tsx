@@ -1,10 +1,7 @@
 import { createContext } from "react";
 
 const ThemeContext = createContext({
-    theme:"dark",
-    setTheme:(_theme:string)=> {}
+  theme: "dark",
+  toggleColorMode: () => {},
 });
 export default ThemeContext;
-
-
-

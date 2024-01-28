@@ -4,17 +4,19 @@ import themes from "./styles/theme";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/Routes";
 import ThemeContext from "./context/ThemeContext";
-import { useState } from "react";
+import React from "react";
 function App() {
-  
   const isTheme = localStorage.getItem("theme");
-  const [theme, setTheme] = useState(isTheme ? isTheme : "dark");
+  const [theme, setTheme] = React.useState<string>(isTheme ? isTheme : "dark");
   const themeMode = theme === "dark" ? themes.dark : themes.light;
+  const toggleColorMode = () => {
+    setTheme((prevMode) => (prevMode === "light" ? "dark" : "light"));
+  };
   const client = new QueryClient({});
 
   return (
     <ThemeProvider theme={themeMode}>
-      <ThemeContext.Provider value={{ theme, setTheme }}>
+      <ThemeContext.Provider value={{ theme, toggleColorMode }}>
         <QueryClientProvider client={client}>
           <RouterProvider router={router} />
         </QueryClientProvider>
