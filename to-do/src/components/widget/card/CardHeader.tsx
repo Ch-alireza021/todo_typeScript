@@ -8,6 +8,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomIconButton, Flexrow } from "../../../styles/creatStyle";
+import { showDate } from "../../../feature/date/date";
 // import React from "react";
 
 const CustomBox = styled(Box)`
@@ -17,27 +18,27 @@ const CustomBox = styled(Box)`
   align-items: center;
 `;
 
-
 const CardHeader = () => {
   console.log("cardheader");
-  const date = new Date().toISOString();
-  console.log(date);
+  const now = Date.now();
+  const date = showDate(now);
+
   return (
-    <Flexrow >
-      <CustomBox >
+    <Flexrow>
+      <CustomBox>
         <FormControlLabel
           value="start"
-          control={<Checkbox size="small"/>}
+          control={<Checkbox size="small" />}
           label="title"
           labelPlacement="start"
         />
         <Typography>Edited</Typography>
 
-        <CustomIconButton >
-          <EditIcon sx={{fontSize:"15px"}} />
+        <CustomIconButton>
+          <EditIcon sx={{ fontSize: "15px" }} />
         </CustomIconButton>
-        <CustomIconButton >
-          <DeleteIcon sx={{fontSize:"15px"}} />
+        <CustomIconButton>
+          <DeleteIcon sx={{ fontSize: "15px" }} />
         </CustomIconButton>
       </CustomBox>
       <Typography>{date}</Typography>
