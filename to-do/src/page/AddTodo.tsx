@@ -38,15 +38,20 @@ const AddTodo = () => {
   const id: string | null = searchParams.get("id");
   console.log(id);
 
-  const { data } = useQuery({
-    queryKey: ["editeTodo"],
-    queryFn: async () => {
-      const data = await api.get(`todo/${id}`);
-      return data?.data;
-    },
-  });
-
-  console.log(data);
+  if (id) {
+    useQuery({
+      queryKey: ["editeTodo"],
+      queryFn: async () => {
+        const data = (await api.get(`todo/${id}`)).data;
+        formik.setValues({
+          title: data.title,
+          description: data.description,
+          dueDate: data.dueDate,
+        });
+        return data;
+      },
+    });
+  }
 
   // --------------------------------------------------------------------
   const navigate = useNavigate();
@@ -101,15 +106,6 @@ const AddTodo = () => {
     validationSchema,
   });
 
-  useEffect(() => {
-    if (id && data) {
-      formik.setValues({
-        title: data.title,
-        description: data.description,
-        dueDate: data.dueDate,
-      });
-    }
-  }, [data]);
 
   console.log(initialValues);
 
