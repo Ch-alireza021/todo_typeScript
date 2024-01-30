@@ -1,12 +1,13 @@
 import { Box, Button, TextField, makeStyles, styled } from "@mui/material";
 import { FlexColumn } from "../styles/creatStyle";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "@emotion/react";
 import api from "../api/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PATH } from "../config/router/routerConfig";
+import { useQuery } from "@tanstack/react-query";
 
 interface FormValues {
   title: string;
@@ -26,6 +27,28 @@ const CustomTextFild = styled(TextField)`
 // --------------------------------------------------------------------
 //                       AddTodo COMPONENT
 const AddTodo = () => {
+  const initialValues: FormValues = {
+    title: "",
+    description: "",
+    dueDate: "",
+  };
+  // -----------------------
+
+  const [searchParams] = useSearchParams();
+  const id: string | null = searchParams.get("id");
+  console.log(id);
+
+  const { data } = useQuery({
+    queryKey: ["editeTodo"],
+    queryFn: async () => {
+      const data = await api.get(`todo/${id}`);
+      return data?.data;
+    },
+  });
+
+  console.log(data);
+
+  // --------------------------------------------------------------------
   const navigate = useNavigate();
   const lineWidth = window.innerWidth;
   const fontSize = 10;
@@ -38,13 +61,9 @@ const AddTodo = () => {
   console.log(mode);
 
   // --------------------------------------------------------------------
-  const initialValues: FormValues = {
-    title: "",
-    description: "",
-    dueDate: "",
-  };
+
   const totalLines = Math.ceil(
-    initialValues.description.length / charactersPerLine
+    initialValues?.description.length / charactersPerLine
   );
 
   const validationSchema = Yup.object({
@@ -53,54 +72,86 @@ const AddTodo = () => {
     dueDate: Yup.string().required("Required"),
   });
 
+  // --------------------------------------------------------------------
+  //                          handleSubmit
   const handleSubmit = async (values: FormValues) => {
-    console.log(values);
     try {
-      const res = await api.post("todo", { ...values, isDone: false });
+      if (id) {
+        const res = await api.patch(`todo/${id}`, {
+          ...values,
+          isDone: false,
+          edited: true,
+        });
+      } else {
+        const res = await api.post("todo", { ...values, isDone: false });
+        console.log(res);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
       setTimeout(() => {
         navigate(PATH.HOME);
       }, 2000);
-      console.log(res);
-    } catch (error) {
-      console.log(error);
     }
   };
 
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      <Form>
-        <FlexColumn sx={{ alignItems: "start" }}>
-          <div>
-            <Field
-              type="text"
-              id="title"
-              name="title"
-              as={TextField}
-              variant="standard"
-              color="secondary"
-              label="title"
-            />
-            <ErrorMessage name="title" component={StyleErrorMessage} />
-          </div>
-          <Box sx={{ width: "100%", boxSizing: "border-box" }}>
-            <Field
-              label="Description"
-              as={CustomTextFild}
-              variant="standard"
-              color="secondary"
-              multiline
-              rows={totalLines}
-              id="description"
-              name="description"
-            />
-            <ErrorMessage name="description" component={StyleErrorMessage} />
-          </Box>
+  const formik = useFormik({
+    initialValues,
+    onSubmit: handleSubmit,
+    validationSchema,
+  });
 
-          {/* <Box>
+  useEffect(() => {
+    if (id && data) {
+      formik.setValues({
+        title: data.title,
+        description: data.description,
+        dueDate: data.dueDate,
+      });
+    }
+  }, [data]);
+
+  console.log(initialValues);
+
+  return (
+    // <Formik
+    //   initialValues={initialValues}
+    //   validationSchema={validationSchema}
+    //   onSubmit={handleSubmit}
+    // >
+    <form onSubmit={formik.handleSubmit}>
+      <FlexColumn sx={{ alignItems: "start" }}>
+        <div>
+          <TextField
+            type="text"
+            id="title"
+            name="title"
+            // as={TextField}
+            variant="standard"
+            color="secondary"
+            label="title"
+            onChange={formik.handleChange}
+            value={formik.values.title}
+          />
+          {/* <ErrorMessage name="title" component={StyleErrorMessage} /> */}
+        </div>
+        <Box sx={{ width: "100%", boxSizing: "border-box" }}>
+          <CustomTextFild
+            label="Description"
+            // as={CustomTextFild}
+            variant="standard"
+            color="secondary"
+            multiline
+            rows={totalLines}
+            id="description"
+            name="description"
+            onChange={formik.handleChange}
+            value={formik.values.description}
+          />
+          {/* <ErrorMessage name="description" component={StyleErrorMessage} /> */}
+        </Box>
+
+        {/* <Box>
             <DatePicker
               render={<TextField variant="standard" label="Due Date" />}
               minDate={Date.now()}
@@ -110,19 +161,21 @@ const AddTodo = () => {
             <ErrorMessage name="dueDate" component={StyleErrorMessage} />
           </Box> */}
 
-          <Field
-            as={TextField}
-            variant="standard"
-            inputProps={{
-              min: new Date().toISOString().split("T")[0],
-            }}
-            name="dueDate"
-            type="date"
-            label="Due Date"
-            InputLabelProps={{ shrink: true }}
-          />
+        <TextField
+          // as={TextField}
+          variant="standard"
+          inputProps={{
+            min: new Date().toISOString().split("T")[0],
+          }}
+          name="dueDate"
+          type="date"
+          label="Due Date"
+          InputLabelProps={{ shrink: true }}
+          onChange={formik.handleChange}
+          value={formik.values.dueDate}
+        />
 
-          {/* <DatePicker
+        {/* <DatePicker
             render={<TextField variant="standard" label="Due Time" />}
             disableDayPicker
             format="HH:mm"
@@ -132,17 +185,17 @@ const AddTodo = () => {
             name="timePicker"
           /> */}
 
-          <Button
-            variant={mode === "dark" ? "outlined" : "contained"}
-            color="secondary"
-            sx={{ width: "300px", alignSelf: "center" }}
-            type="submit"
-          >
-            Submit
-          </Button>
-        </FlexColumn>
-      </Form>
-    </Formik>
+        <Button
+          variant={mode === "dark" ? "outlined" : "contained"}
+          color="secondary"
+          sx={{ width: "300px", alignSelf: "center" }}
+          type="submit"
+        >
+          Submit
+        </Button>
+      </FlexColumn>
+    </form>
+    // </Formik>
   );
 };
 
