@@ -13,15 +13,15 @@ const initialOption: InitialOptionType = {
 
 
 type showdateType = (
-    date: number,
+    date: string,
     option?: InitialOptionType
   ) => string;
   
   export const showDate: showdateType = (
-    date: number,
+    date: string,
     option: InitialOptionType = initialOption
   ) => {
-    return new Intl.DateTimeFormat("En-En", {
+    return new Intl.DateTimeFormat("en-US", {
       ...option,
       timeZone: "Asia/Tehran",
     }).format(new Date(date || Date.now()));
