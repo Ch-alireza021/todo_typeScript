@@ -8,7 +8,8 @@ export interface TodoType {
   title: string;
   description: string;
   duedate: string;
-  isDone:boolean
+  isDone:boolean;
+  edited:string|undefined
 }
 
 const Home = () => {

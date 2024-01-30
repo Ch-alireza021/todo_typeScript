@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import { Box, styled } from "@mui/material";
 import { ThemeContext } from "@emotion/react";
@@ -20,13 +20,20 @@ interface CardProps {
 
 const Card: FC<CardProps> = ({ data }) => {
   const mode = React.useContext(ThemeContext).palette.mode;
+  const [isDone, setIsDone] = useState(data?.isDone);
+  const handleChangeIsDone = () => {
+    setIsDone((prev) => !prev);
+  };
+  console.log(isDone);
 
   return (
     <CustomBox sx={{ background: mode === "dark" ? "#197f754f" : "#0300024f" }}>
-      <CardHeader />
-      <CardContent
-        data={{ description: data?.description, isDone: data.isDone }}
+      <CardHeader
+        data={data}
+        onChangeIsDone={handleChangeIsDone}
+        isDone={isDone}
       />
+      <CardContent data={{ description: data?.description, isDone: isDone }} />
     </CustomBox>
   );
 };
