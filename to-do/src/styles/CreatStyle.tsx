@@ -10,3 +10,10 @@ export const Flexrow=styled(Box)`
     justify-content: space-between;
     align-items: center;
 `
+export const FlexColumn=styled(Box)`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction:column;
+    gap:1.5rem;
+`
