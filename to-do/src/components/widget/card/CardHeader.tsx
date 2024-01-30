@@ -11,7 +11,6 @@ import { CustomIconButton, Flexrow } from "../../../styles/creatStyle";
 import { showDate } from "../../../feature/date/date";
 import { TodoType } from "../../../page/Home";
 import { FC } from "react";
-import { Check } from "@mui/icons-material";
 // import React from "react";
 
 const CustomBox = styled(Box)`
@@ -23,31 +22,43 @@ const CustomBox = styled(Box)`
 
 interface CardHeadertype {
   data: TodoType;
-  onChangeIsDone:()=>void;
-  isDone:boolean
+  isDone: boolean;
+  onChangeIsDone: (id: string) => void;
+  onDelete: (id: string) => void;
+  onEdite: (id: string) => void;
 }
 
-const CardHeader: FC<CardHeadertype> = ({ data ,onChangeIsDone,isDone}) => {
-  const { title, duedate, edited } = data;
+const CardHeader: FC<CardHeadertype> = ({
+  data,
+  onChangeIsDone,
+  isDone,
+  onDelete,
+  onEdite,
+}) => {
+  const { title, duedate, edited, id } = data;
   const date = showDate(duedate);
- 
 
   return (
     <Flexrow>
       <CustomBox>
         <FormControlLabel
           value="start"
-          control={<Checkbox size="small" checked={isDone} onChange={onChangeIsDone} />}
+          control={
+            <Checkbox
+              size="small"
+              checked={isDone}
+              onChange={() => onChangeIsDone(id)}
+            />
+          }
           label={title}
           labelPlacement="start"
-        
         />
         {edited && <Typography>Edited</Typography>}
 
-        <CustomIconButton>
+        <CustomIconButton onClick={() => onEdite(id)}>
           <EditIcon sx={{ fontSize: "15px" }} />
         </CustomIconButton>
-        <CustomIconButton>
+        <CustomIconButton onClick={() => onDelete(id)}>
           <DeleteIcon sx={{ fontSize: "15px" }} />
         </CustomIconButton>
       </CustomBox>
