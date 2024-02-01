@@ -23,13 +23,23 @@ const Home = () => {
       return data.data;
     },
   });
+  // ---------------------------------------------
+  //                HANDLEPAGE
   const handlePage = (page: number) => {
     setPage(page);
+  };
+  // ---------------------------------------------
+  // Separate data based on each page
+  const dataOfpage = (todos: TodoType[], page: number) => {
+    const sortData=todos?.sort((a,b)=>+(a.duedate) - +(b.duedate))
+    console.log(sortData);
+    const data = todos?.slice((page - 1) * 5, page * 5);
+    return data;
   };
 
   return (
     <FlexColumn>
-      {todos?.map((todo: TodoType) => (
+      {dataOfpage(todos, page)?.map((todo: TodoType) => (
         <Card data={todo} key={todo.id} />
       ))}
       <Paginate length={todos?.length} page={{ page, handlePage }} />
