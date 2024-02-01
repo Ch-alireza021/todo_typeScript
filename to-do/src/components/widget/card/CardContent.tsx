@@ -20,7 +20,6 @@ interface Content {
 }
 
 const CardContent: FC<Content> = ({ data }) => {
-  console.log(data);
   return (
     <Box position={"relative"}>
       <Box sx={{ height: "55px" }}>{data.description}</Box>
