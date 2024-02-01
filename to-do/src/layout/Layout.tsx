@@ -8,7 +8,7 @@ const Layout:FC = () => {
   return (
     <>
       <Header />
-      <Container sx={{width:"100vw",height:"100vh",paddingTop:"70px"}}>
+      <Container sx={{width:"100vw",minHeight:"100vh",paddingTop:"70px"}}>
         <Outlet/>
       </Container>
     </>
