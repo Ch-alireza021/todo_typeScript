@@ -35,8 +35,9 @@ const CardHeader: FC<CardHeadertype> = ({
   onDelete,
   onEdite,
 }) => {
-  const { title, duedate, edited, id } = data;
-  const date = showDate(duedate);
+  console.log(data);
+  const { title, dueDate, edited, id } = data;
+  const date = showDate(dueDate);
 
   return (
     <Flexrow>
