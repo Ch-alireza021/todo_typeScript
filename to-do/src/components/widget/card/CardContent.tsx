@@ -1,16 +1,14 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/system";
 import { FC } from "react";
+import { Flexrow } from "../../../styles/creatStyle";
 const CustomBlurBox = styled(Box)`
-  backdrop-filter: blur(9px);
-  -webkit-backdrop-filter: blur(7.3px);
   width: 100%;
-  position: absolute;
-  font-weight: 900;
+  font-weight: 600;
   font-size: 20px;
+  display: flex;
   justify-content: center;
   align-items: center;
-  bottom: 0;
   height: 55px;
   border-radius: 5px;
 `;
@@ -21,9 +19,14 @@ interface Content {
 
 const CardContent: FC<Content> = ({ data }) => {
   return (
-    <Box position={"relative"}>
-      <Box sx={{ height: "55px" }}>{data.description}</Box>
-      <CustomBlurBox sx={{display:data.isDone ? "flex" :"none"}}>Compeleted</CustomBlurBox>
+    <Box>
+      {data.isDone ? (
+        <CustomBlurBox>
+          Compeleted
+        </CustomBlurBox>
+      ) : (
+        <Flexrow sx={{ height: "55px" }}>{data.description}</Flexrow>
+      )}
     </Box>
   );
 };
