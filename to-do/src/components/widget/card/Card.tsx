@@ -1,7 +1,5 @@
-import React, { FC, useState } from "react";
-
-import { Box, styled } from "@mui/material";
-import { ThemeContext } from "@emotion/react";
+import  { FC, useState } from "react";
+import { Box, styled, useTheme } from "@mui/material";
 import CardHeader from "./CardHeader";
 import CardContent from "./CardContent";
 import { TodoType } from "../../../page/Home";
@@ -9,6 +7,7 @@ import api from "../../../api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { PATH } from "../../../config/router/routerConfig";
+import setDone from "../../../feature/date/setIsDone";
 
 const CustomBox = styled(Box)`
   box-sizing: border-box;
@@ -24,21 +23,17 @@ interface CardProps {
 
 const Card: FC<CardProps> = ({ data }) => {
   const queryClient = useQueryClient();
-  const navigate=useNavigate()
-  const mode = React.useContext(ThemeContext).palette.mode;
+  const navigate = useNavigate();
   const [isDone, setIsDone] = useState(data?.isDone);
   const handleChangeIsDone = async (id: string) => {
     setIsDone((prev) => !prev);
-    try {
-      console.log(isDone);
-      const res = await api.patch(`todo/${id}`, { isDone: !isDone });
-      console.log(res);
-    } catch (error) {
-      console.log(error);
+    const res=await setDone(id,isDone);
+    if(res==="ok"){
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     }
   };
-// --------------------------------------------------------------
-//                             DELETE
+  // --------------------------------------------------------------
+  //                             DELETE
   const mutation = useMutation({
     mutationFn: (id: string) => api.delete(`todo/${id}`),
     onSuccess: () => {
@@ -53,16 +48,15 @@ const Card: FC<CardProps> = ({ data }) => {
   const handleDelete = async (id: string) => {
     mutation.mutate(id);
   };
-// --------------------------------------------------------------
-//                              EDITE
-const handleEdite=(id:string)=>{
-navigate(`${PATH.TODO}?id=${id}`)
-}
-// --------------------------------------------------------------
-
+  // --------------------------------------------------------------
+  //                              EDITE
+  const handleEdite = (id: string) => {
+    navigate(`${PATH.TODO}?id=${id}`);
+  };
+  // --------------------------------------------------------------
 
   return (
-    <CustomBox sx={{ background: mode === "dark" ? "#197f754f" : "#0300024f" }}>
+    <CustomBox sx={{ background:  "#0300024f" }}>
       <CardHeader
         data={data}
         onChangeIsDone={handleChangeIsDone}
