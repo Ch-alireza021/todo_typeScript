@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Card from "../components/widget/card/Card";
 import api from "../api/api";
-import { FlexColumn } from "../styles/creatStyle";
+import { FlexColumn, Flexrow } from "../styles/creatStyle";
 import Paginate from "../components/pagination/paginate";
 import { useState } from "react";
 import setIsDone from "../feature/date/setIsDone";
@@ -75,7 +75,11 @@ const Home = () => {
       {dataOfpage(data, page)?.map((todo: TodoType) => (
         <Card data={todo} key={todo.id} />
       ))}
-      <Paginate length={todos?.length} page={{ page, handlePage }} />
+      {todos?.length > 0 ? (
+        <Paginate length={todos?.length} page={{ page, handlePage }} />
+      ) : (
+        <Flexrow fontSize={"3rem"}>There is nothing to do</Flexrow>
+      )}
     </FlexColumn>
   );
 };

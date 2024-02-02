@@ -9,7 +9,6 @@ interface Length {
 
 const paginate: FC<Length> = ({ length=1, page: pageState }) => {
   const page = Math.ceil(length / 5);
-  console.log(page);
   const handleChangePage = (
     _event: React.ChangeEvent<unknown> | null,
     newPage: number
