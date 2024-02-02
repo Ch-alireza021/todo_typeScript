@@ -11,7 +11,6 @@ import { CustomIconButton, Flexrow } from "../../../styles/creatStyle";
 import { showDate } from "../../../feature/date/date";
 import { TodoType } from "../../../page/Home";
 import { FC } from "react";
-// import React from "react";
 
 const CustomBox = styled(Box)`
   display: flex;
@@ -35,7 +34,6 @@ const CardHeader: FC<CardHeadertype> = ({
   onDelete,
   onEdite,
 }) => {
-  console.log(data);
   const { title, dueDate, edited, id } = data;
   const date = showDate(dueDate);
 
