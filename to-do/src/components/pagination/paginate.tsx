@@ -7,8 +7,9 @@ interface Length {
   page: { page: number; handlePage: (page: number) => void };
 }
 
-const paginate: FC<Length> = ({ length, page: pageState }) => {
+const paginate: FC<Length> = ({ length=1, page: pageState }) => {
   const page = Math.ceil(length / 5);
+  console.log(page);
   const handleChangePage = (
     _event: React.ChangeEvent<unknown> | null,
     newPage: number
