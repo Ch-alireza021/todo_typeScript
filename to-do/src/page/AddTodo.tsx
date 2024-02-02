@@ -1,9 +1,13 @@
-import { Box, Button, TextField, makeStyles, styled } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  styled,
+  useTheme,
+} from "@mui/material";
 import { FlexColumn } from "../styles/creatStyle";
-import { ErrorMessage, Field, Form, Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useContext, useEffect, useState } from "react";
-import { ThemeContext } from "@emotion/react";
 import api from "../api/api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { PATH } from "../config/router/routerConfig";
@@ -17,10 +21,6 @@ interface FormValues {
 
 // -------------------------------------------------
 //                     STYLE
-const StyleErrorMessage = styled(Box)`
-  color: red;
-  font-size: 14px;
-`;
 const CustomTextFild = styled(TextField)`
   width: 100%;
 `;
@@ -36,7 +36,6 @@ const AddTodo = () => {
 
   const [searchParams] = useSearchParams();
   const id: string | null = searchParams.get("id");
-  console.log(id);
 
   if (id) {
     useQuery({
@@ -60,11 +59,7 @@ const AddTodo = () => {
   const charactersPerLine = Math.floor(lineWidth / fontSize);
 
   // --------------------------------------------------------------------
-  const theme = useContext(ThemeContext);
-  console.log(theme);
-  const mode = theme.palette.mode;
-  console.log(mode);
-
+  const mode = useTheme().palette.mode;
   // --------------------------------------------------------------------
 
   const totalLines = Math.ceil(
@@ -72,7 +67,7 @@ const AddTodo = () => {
   );
 
   const validationSchema = Yup.object({
-    title: Yup.string().required("Required"),
+    title: Yup.string().required("Required").max(20),
     description: Yup.string().required("Required"),
     dueDate: Yup.string().required("Required"),
   });
@@ -87,16 +82,17 @@ const AddTodo = () => {
           isDone: false,
           edited: true,
         });
+        if (res.statusText === "OK") {
+          navigate(PATH.HOME);
+        }
       } else {
         const res = await api.post("todo", { ...values, isDone: false });
-        console.log(res);
+        if (res.statusText === "Created") {
+          navigate(PATH.HOME);
+        }
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setTimeout(() => {
-        navigate(PATH.HOME);
-      }, 2000);
     }
   };
 
@@ -106,59 +102,52 @@ const AddTodo = () => {
     validationSchema,
   });
 
-
-  console.log(initialValues);
-
   return (
-    // <Formik
-    //   initialValues={initialValues}
-    //   validationSchema={validationSchema}
-    //   onSubmit={handleSubmit}
-    // >
     <form onSubmit={formik.handleSubmit}>
       <FlexColumn sx={{ alignItems: "start" }}>
-        <div>
-          <TextField
-            type="text"
-            id="title"
-            name="title"
-            // as={TextField}
-            variant="standard"
-            color="secondary"
-            label="title"
-            onChange={formik.handleChange}
-            value={formik.values.title}
-          />
-          {/* <ErrorMessage name="title" component={StyleErrorMessage} /> */}
-        </div>
-        <Box sx={{ width: "100%", boxSizing: "border-box" }}>
-          <CustomTextFild
-            label="Description"
-            // as={CustomTextFild}
-            variant="standard"
-            color="secondary"
-            multiline
-            rows={totalLines}
-            id="description"
-            name="description"
-            onChange={formik.handleChange}
-            value={formik.values.description}
-          />
-          {/* <ErrorMessage name="description" component={StyleErrorMessage} /> */}
-        </Box>
+        <TextField
+          type="text"
+          id="title"
+          name="title"
+          // as={TextField}
+          variant="standard"
+          color="secondary"
+          label="title"
+          onChange={formik.handleChange}
+          value={formik.values.title}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.touched.title && formik.errors.title
+              ? formik.errors.title
+              : null
+          }
+          error={formik.touched.title && formik.errors.title ? true : false}
+        />
 
-        {/* <Box>
-            <DatePicker
-              render={<TextField variant="standard" label="Due Date" />}
-              minDate={Date.now()}
-              id="dueDate"
-              name="dueDate"
-            />
-            <ErrorMessage name="dueDate" component={StyleErrorMessage} />
-          </Box> */}
+        <CustomTextFild
+          label="Description"
+          variant="standard"
+          color="secondary"
+          multiline
+          rows={totalLines}
+          id="description"
+          name="description"
+          onChange={formik.handleChange}
+          value={formik.values.description}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.touched.description && formik.errors.description
+              ? formik.errors.description
+              : null
+          }
+          error={
+            formik.touched.description && formik.errors.description
+              ? true
+              : false
+          }
+        />
 
         <TextField
-          // as={TextField}
           variant="standard"
           inputProps={{
             min: new Date().toISOString().split("T")[0],
@@ -169,18 +158,14 @@ const AddTodo = () => {
           InputLabelProps={{ shrink: true }}
           onChange={formik.handleChange}
           value={formik.values.dueDate}
+          onBlur={formik.handleBlur}
+          helperText={
+            formik.touched.dueDate && formik.errors.dueDate
+              ? formik.errors.dueDate
+              : null
+          }
+          error={formik.touched.dueDate && formik.errors.dueDate ? true : false}
         />
-
-        {/* <DatePicker
-            render={<TextField variant="standard" label="Due Time" />}
-            disableDayPicker
-            format="HH:mm"
-            plugins={[<TimePicker hideSeconds />]}
-            calendarPosition="bottom-right"
-            id="timePicker"
-            name="timePicker"
-          /> */}
-
         <Button
           variant={mode === "dark" ? "outlined" : "contained"}
           color="secondary"
@@ -191,7 +176,6 @@ const AddTodo = () => {
         </Button>
       </FlexColumn>
     </form>
-    // </Formik>
   );
 };
 
