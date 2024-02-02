@@ -16,7 +16,6 @@ const paginate: FC<Length> = ({ length=1, page: pageState }) => {
     pageState.handlePage(newPage);
   };
 
-  console.log(pageState.page);
   return (
     <Stack spacing={2}>
       <Pagination
